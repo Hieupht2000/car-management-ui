@@ -1,0 +1,12 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "car": {
+    "title": "Car List",
+    "add": "Add Car",
+    "licensePlate": "License Plate",
+    "brand": "Brand"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy"
+  },
+  "car": {
+    "title": "Danh sách xe",
+    "add": "Thêm xe",
+    "licensePlate": "Biển số",
+    "brand": "Hãng xe"
+  }
+}
