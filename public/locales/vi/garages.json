@@ -1,0 +1,33 @@
+{
+  "title": "Quản Lý Gara",
+  "addGarage": "Thêm Gara Mới",
+  "editGarage": "Chỉnh Sửa Gara",
+  "deleteGarage": "Xóa Gara",
+  "searchPlaceholder": "Tìm kiếm theo tên gara...",
+  "table": {
+    "name": "Tên Gara",
+    "address": "Địa Chỉ",
+    "phone": "Điện Thoại",
+    "capacity": "Sức Chứa",
+    "status": "Trạng Thái",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "name": "Tên Gara",
+    "address": "Địa Chỉ",
+    "city": "Thành Phố",
+    "phone": "Điện Thoại",
+    "email": "Email",
+    "capacity": "Sức Chứa",
+    "manager": "Người Quản Lý",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải gara...",
+    "noGarages": "Không tìm thấy gara",
+    "addSuccess": "Thêm gara thành công",
+    "editSuccess": "Cập nhật gara thành công",
+    "deleteSuccess": "Xóa gara thành công"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "Quản Lý Dịch Vụ",
+  "addService": "Thêm Dịch Vụ Mới",
+  "editService": "Chỉnh Sửa Dịch Vụ",
+  "deleteService": "Xóa Dịch Vụ",
+  "searchPlaceholder": "Tìm kiếm theo tên dịch vụ...",
+  "table": {
+    "name": "Tên Dịch Vụ",
+    "description": "Mô Tả",
+    "price": "Giá",
+    "duration": "Thời Gian",
+    "status": "Trạng Thái",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "name": "Tên Dịch Vụ",
+    "description": "Mô Tả",
+    "price": "Giá",
+    "duration": "Thời Gian (phút)",
+    "category": "Danh Mục",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải dịch vụ...",
+    "noServices": "Không tìm thấy dịch vụ",
+    "addSuccess": "Thêm dịch vụ thành công",
+    "editSuccess": "Cập nhật dịch vụ thành công",
+    "deleteSuccess": "Xóa dịch vụ thành công"
+  }
+}

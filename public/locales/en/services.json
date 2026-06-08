@@ -1,0 +1,31 @@
+{
+  "title": "Services Management",
+  "addService": "Add New Service",
+  "editService": "Edit Service",
+  "deleteService": "Delete Service",
+  "searchPlaceholder": "Search by service name...",
+  "table": {
+    "name": "Service Name",
+    "description": "Description",
+    "price": "Price",
+    "duration": "Duration",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "form": {
+    "name": "Service Name",
+    "description": "Description",
+    "price": "Price",
+    "duration": "Duration (minutes)",
+    "category": "Category",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading services...",
+    "noServices": "No services found",
+    "addSuccess": "Service added successfully",
+    "editSuccess": "Service updated successfully",
+    "deleteSuccess": "Service deleted successfully"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "title": "Khách Hàng",
+  "addCustomer": "Thêm Khách Hàng Mới",
+  "editCustomer": "Chỉnh Sửa Khách Hàng",
+  "deleteCustomer": "Xóa Khách Hàng",
+  "searchPlaceholder": "Tìm kiếm theo tên hoặc điện thoại...",
+  "table": {
+    "name": "Tên",
+    "phone": "Điện Thoại",
+    "email": "Email",
+    "address": "Địa Chỉ",
+    "totalCars": "Tổng Xe",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "name": "Họ Và Tên",
+    "phone": "Điện Thoại",
+    "email": "Email",
+    "address": "Địa Chỉ",
+    "city": "Thành Phố",
+    "zipCode": "Mã Zip",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải khách hàng...",
+    "noCustomers": "Không tìm thấy khách hàng",
+    "addSuccess": "Thêm khách hàng thành công",
+    "editSuccess": "Cập nhật khách hàng thành công",
+    "deleteSuccess": "Xóa khách hàng thành công"
+  }
+}

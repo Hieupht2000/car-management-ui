@@ -1,0 +1,36 @@
+{
+  "title": "Thông Tin Kỹ Thuật",
+  "addTechnical": "Thêm Thông Tin Kỹ Thuật",
+  "editTechnical": "Chỉnh Sửa Thông Tin Kỹ Thuật",
+  "deleteTechnical": "Xóa Thông Tin Kỹ Thuật",
+  "searchPlaceholder": "Tìm kiếm theo xe hoặc loại...",
+  "table": {
+    "car": "Xe",
+    "type": "Loại",
+    "description": "Mô Tả",
+    "date": "Ngày",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "car": "Xe",
+    "type": "Loại",
+    "description": "Mô Tả",
+    "details": "Chi Tiết Kỹ Thuật",
+    "serviceInterval": "Khoảng Bảo Trì",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải thông tin kỹ thuật...",
+    "noInfo": "Không tìm thấy thông tin kỹ thuật",
+    "addSuccess": "Thêm thông tin kỹ thuật thành công",
+    "editSuccess": "Cập nhật thông tin kỹ thuật thành công",
+    "deleteSuccess": "Xóa thông tin kỹ thuật thành công"
+  },
+  "types": {
+    "maintenance": "Bảo Trì",
+    "repair": "Sửa Chữa",
+    "inspection": "Kiểm Tra",
+    "upgrade": "Nâng Cấp"
+  }
+}

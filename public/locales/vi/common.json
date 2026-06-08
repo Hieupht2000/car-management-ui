@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Hệ Thống Quản Lý Xe",
+    "tagline": "Giải pháp quản lý phương tiện chuyên nghiệp"
+  },
+  "navigation": {
+    "dashboard": "Bảng Điều Khiển",
+    "cars": "Xe",
+    "bookings": "Lịch Hẹn",
+    "customers": "Khách Hàng",
+    "invoices": "Hóa Đơn",
+    "users": "Người Dùng",
+    "services": "Dịch Vụ",
+    "garages": "Gara",
+    "timeSlots": "Khoảng Thời Gian",
+    "technical": "Kỹ Thuật",
+    "logout": "Đăng Xuất",
+    "login": "Đăng Nhập"
+  },
+  "buttons": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh Sửa",
+    "add": "Thêm",
+    "submit": "Gửi",
+    "back": "Quay Lại",
+    "next": "Tiếp Theo",
+    "previous": "Trước Đó",
+    "close": "Đóng",
+    "confirm": "Xác Nhận"
+  },
+  "messages": {
+    "success": "Thành Công",
+    "error": "Lỗi",
+    "warning": "Cảnh Báo",
+    "info": "Thông Tin",
+    "loading": "Đang Tải...",
+    "noData": "Không Có Dữ Liệu",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa cái này?",
+    "confirmAction": "Bạn có chắc chắn muốn thực hiện hành động này?",
+    "requiredField": "Trường này là bắt buộc",
+    "invalidInput": "Đầu Vào Không Hợp Lệ"
+  },
+  "pagination": {
+    "showing": "Hiển Thị",
+    "of": "của",
+    "entries": "mục",
+    "previous": "Trước Đó",
+    "next": "Tiếp Theo"
+  },
+  "filters": {
+    "all": "Tất Cả",
+    "search": "Tìm Kiếm",
+    "filter": "Lọc",
+    "sort": "Sắp Xếp",
+    "reset": "Đặt Lại"
+  }
+}

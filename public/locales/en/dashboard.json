@@ -1,0 +1,54 @@
+{
+  "title": "Dashboard",
+  "welcomeBack": "Welcome Back!",
+  "stats": {
+    "cars": "Cars",
+    "dateBookings": "Date Bookings",
+    "events": "Events",
+    "invoices": "Invoices"
+  },
+  "changes": {
+    "carsMonth": "Month",
+    "bookingsUpcoming": "upcoming",
+    "eventsLastMonth": "% last month",
+    "invoicesRevenue": "M VND"
+  },
+  "quickActions": {
+    "carManagement": "Car Management",
+    "carManagementDesc": "View car list, add new and edit information",
+    "repairAppointments": "Repair Appointments",
+    "repairAppointmentsDesc": "Manage and schedule maintenance and repairs",
+    "customers": "Customers",
+    "customersDesc": "Manage customer information",
+    "timeSlots": "TimeSlots",
+    "timeSlotsDesc": "Manage appointment scheduling slots",
+    "technical": "Technical",
+    "technicalDesc": "Management Technical Information",
+    "invoicesPayments": "Invoices & Payments",
+    "invoicesPaymentsDesc": "View invoice and payment history",
+    "garages": "Garages",
+    "garagesDesc": "View and manage garages",
+    "services": "Services",
+    "servicesDesc": "View and manage services",
+    "userManagement": "User Management",
+    "userManagementDesc": "Manage system users and roles"
+  },
+  "contentGrid": {
+    "recentCars": "Recently Added Cars",
+    "viewAll": "View All",
+    "loadingCars": "Loading cars...",
+    "noCarsFound": "No cars found",
+    "calendarBooking": "Calendar Booking",
+    "loadingAppointments": "Loading appointments...",
+    "noAppointments": "No upcoming appointments",
+    "viewAllAppointments": "View All Appointments"
+  },
+  "table": {
+    "plate": "Plate",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "status": "Status"
+  },
+  "logout": "LogOut"
+}

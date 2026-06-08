@@ -1,0 +1,38 @@
+{
+  "title": "Quản Lý Khoảng Thời Gian",
+  "addSlot": "Thêm Khoảng Thời Gian Mới",
+  "editSlot": "Chỉnh Sửa Khoảng Thời Gian",
+  "deleteSlot": "Xóa Khoảng Thời Gian",
+  "searchPlaceholder": "Tìm kiếm theo ngày hoặc giờ...",
+  "table": {
+    "date": "Ngày",
+    "startTime": "Giờ Bắt Đầu",
+    "endTime": "Giờ Kết Thúc",
+    "capacity": "Sức Chứa",
+    "booked": "Đã Đặt",
+    "available": "Còn Trống",
+    "status": "Trạng Thái",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "date": "Ngày",
+    "startTime": "Giờ Bắt Đầu",
+    "endTime": "Giờ Kết Thúc",
+    "capacity": "Sức Chứa",
+    "service": "Dịch Vụ",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải khoảng thời gian...",
+    "noSlots": "Không tìm thấy khoảng thời gian",
+    "addSuccess": "Thêm khoảng thời gian thành công",
+    "editSuccess": "Cập nhật khoảng thời gian thành công",
+    "deleteSuccess": "Xóa khoảng thời gian thành công"
+  },
+  "status": {
+    "available": "Còn Trống",
+    "full": "Đầy",
+    "closed": "Đóng Cửa"
+  }
+}

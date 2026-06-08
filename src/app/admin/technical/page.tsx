@@ -1,3 +1,9 @@
+/**
+ * Technician Management Page
+ * Manages mechanic and technician staff records
+ * Allows creating, editing, and deleting technician profiles
+ * Tracks technician availability and contact information
+ */
 "use client";
 import React, { useState, useEffect } from "react";
 import {

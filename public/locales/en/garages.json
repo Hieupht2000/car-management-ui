@@ -1,0 +1,33 @@
+{
+  "title": "Garages Management",
+  "addGarage": "Add New Garage",
+  "editGarage": "Edit Garage",
+  "deleteGarage": "Delete Garage",
+  "searchPlaceholder": "Search by garage name...",
+  "table": {
+    "name": "Garage Name",
+    "address": "Address",
+    "phone": "Phone",
+    "capacity": "Capacity",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "form": {
+    "name": "Garage Name",
+    "address": "Address",
+    "city": "City",
+    "phone": "Phone",
+    "email": "Email",
+    "capacity": "Capacity",
+    "manager": "Manager",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading garages...",
+    "noGarages": "No garages found",
+    "addSuccess": "Garage added successfully",
+    "editSuccess": "Garage updated successfully",
+    "deleteSuccess": "Garage deleted successfully"
+  }
+}

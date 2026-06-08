@@ -1,0 +1,43 @@
+{
+  "title": "Quản Lý Người Dùng",
+  "addUser": "Thêm Người Dùng Mới",
+  "editUser": "Chỉnh Sửa Người Dùng",
+  "deleteUser": "Xóa Người Dùng",
+  "searchPlaceholder": "Tìm kiếm theo tên hoặc email...",
+  "table": {
+    "name": "Tên",
+    "email": "Email",
+    "role": "Vai Trò",
+    "status": "Trạng Thái",
+    "joinDate": "Ngày Tham Gia",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "name": "Họ Và Tên",
+    "email": "Email",
+    "password": "Mật Khẩu",
+    "role": "Vai Trò",
+    "phone": "Điện Thoại",
+    "status": "Trạng Thái",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "roles": {
+    "admin": "Quản Trị Viên",
+    "technician": "Kỹ Thuật Viên",
+    "staff": "Nhân Viên",
+    "customer": "Khách Hàng"
+  },
+  "messages": {
+    "loading": "Đang tải người dùng...",
+    "noUsers": "Không tìm thấy người dùng",
+    "addSuccess": "Thêm người dùng thành công",
+    "editSuccess": "Cập nhật người dùng thành công",
+    "deleteSuccess": "Xóa người dùng thành công"
+  },
+  "status": {
+    "active": "Hoạt Động",
+    "inactive": "Không Hoạt Động",
+    "suspended": "Bị Tạm Ngưng"
+  }
+}

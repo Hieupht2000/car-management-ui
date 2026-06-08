@@ -1,8 +1,15 @@
+/**
+ * Cars Management Page
+ * Displays list of vehicles owned by user
+ * Allows adding, editing, and deleting cars
+ * Features search and pagination functionality
+ */
 "use client";
 
 import { useEffect, useState } from "react";
 import { Car, Plus, Search, Edit2, Trash2, X, Loader2, AlertCircle } from "lucide-react";
 import { CarDTO, carService } from "@/services/carService";
+import { useTranslation } from "@/src/hooks/useTranslation";
 
 
 
@@ -59,6 +66,7 @@ import { CarDTO, carService } from "@/services/carService";
 // };
 
 export default function CarPage() {
+    const { t, language, changeLanguage } = useTranslation('cars');
     const [cars, setCars] = useState<CarDTO[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -72,7 +80,7 @@ export default function CarPage() {
         // Get token from localStorage
         const savedToken = localStorage.getItem("token");
         if (!savedToken) {
-            setError("Please log in to continue");
+            setError(t('messages.error'));
             setLoading(false);
             return;
         }
@@ -95,7 +103,7 @@ export default function CarPage() {
     };
 
     const handleDelete = async (carId: number) => {
-        if (!confirm("Bạn có chắc muốn xóa xe này?")) return;
+        if (!confirm(t('messages.confirmDelete'))) return;
         if (!token) return;
 
         try {
@@ -103,13 +111,13 @@ export default function CarPage() {
             setCars((prev) => prev.filter((c) => c.carId !== carId));
         } catch (error: any) {
             console.error(error);
-            alert(error.message || "Failed to delete car");
+            alert(error.message || t('messages.error'));
         }
     };
 
     const handleAdd = async (carData: any) => {
         if (!token) {
-            alert("Token not found!");
+            alert(t('messages.error'));
             return;
         }
 
@@ -119,7 +127,7 @@ export default function CarPage() {
             setShowModal(false);
         } catch (error: any) {
             console.error(error);
-            alert(error.message || "Failed to add car");
+            alert(error.message || t('messages.error'));
         }
     };
 
@@ -135,7 +143,7 @@ export default function CarPage() {
             setEditingCar(null);
         } catch (error: any) {
             console.error(error);
-            alert(error.message || "Failed to update car");
+            alert(error.message || t('messages.error'));
         }
     };
 
@@ -156,7 +164,7 @@ export default function CarPage() {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
                 <div className="text-center">
                     <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-                    <p className="text-gray-600 font-medium">Loading car data...</p>
+                    <p className="text-gray-600 font-medium">{t('messages.loading')}</p>
                 </div>
             </div>
         );
@@ -167,13 +175,13 @@ export default function CarPage() {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
                 <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
                     <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Not Logged In</h2>
-                    <p className="text-gray-600 mb-6">Please log in to access this page</p>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('messages.error')}</h2>
+                    <p className="text-gray-600 mb-6">{t('messages.error')}</p>
                     <button
                         onClick={() => window.location.href = "/auth/login"}
                         className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
                     >
-                        Go to Login Page
+                        {t('form.submit')}
                     </button>
                 </div>
             </div>
@@ -191,9 +199,9 @@ export default function CarPage() {
                         </div>
                         <div>
                             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                Car Management
+                                {t('title')}
                             </h1>
-                            <p className="text-gray-500 mt-1">Information about customer cars</p>
+                            <p className="text-gray-500 mt-1">{t('messages.noCars')}</p>
                         </div>
                     </div>
                 </div>
@@ -221,7 +229,7 @@ export default function CarPage() {
                             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
-                                placeholder="Search by license plate, brand, model, owner..."
+                                placeholder={t('searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
@@ -232,7 +240,7 @@ export default function CarPage() {
                             className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-semibold"
                         >
                             <Plus className="w-5 h-5" />
-                            Add New Car
+                            {t('addCar')}
                         </button>
                     </div>
                 </div>
@@ -242,7 +250,7 @@ export default function CarPage() {
                     <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-blue-100 text-sm font-medium">Total Cars</p>
+                                <p className="text-blue-100 text-sm font-medium">{t('form.submit')}</p>
                                 <p className="text-3xl font-bold mt-2">{cars.length}</p>
                             </div>
                             <div className="p-4 bg-white/20 rounded-xl">
@@ -253,7 +261,7 @@ export default function CarPage() {
                     <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-purple-100 text-sm font-medium">Search Results</p>
+                                <p className="text-purple-100 text-sm font-medium">{t('searchPlaceholder')}</p>
                                 <p className="text-3xl font-bold mt-2">{filteredCars.length}</p>
                             </div>
                             <div className="p-4 bg-white/20 rounded-xl">
@@ -264,7 +272,7 @@ export default function CarPage() {
                     <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-purple-100 text-sm font-medium">Average Year</p>
+                                <p className="text-purple-100 text-sm font-medium">{t('form.submit')}</p>
                                 <p className="text-3xl font-bold mt-2">
                                     {cars.length > 0 ? Math.round(cars.reduce((sum, car) => sum + car.year, 0) / cars.length) : 0}
                                 </p>
@@ -283,13 +291,13 @@ export default function CarPage() {
                             <thead>
                                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">CarId</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">License Plate</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Owner</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Brand</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Model</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Year</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Mileage</th>
-                                    <th className="px-6 py-4 text-center text-sm font-bold text-gray-700">Actions</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('table.plate')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('table.brand')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('table.model')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('table.year')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-center text-sm font-bold text-gray-700">{t('form.submit')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -333,7 +341,7 @@ export default function CarPage() {
                         {filteredCars.length === 0 && (
                             <div className="text-center py-12 text-gray-500">
                                 <Car className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                                <p className="text-lg font-medium">No cars found</p>
+                                <p className="text-lg font-medium">{t('messages.noCars')}</p>
                             </div>
                         )}
                     </div>
@@ -345,7 +353,8 @@ export default function CarPage() {
                 <CarModal
                     close={() => setShowModal(false)}
                     submit={handleAdd}
-                    title="Add New Car"
+                    title={t('addCar')}
+                    t={t}
                 />
             )}
 
@@ -357,9 +366,10 @@ export default function CarPage() {
                         setEditingCar(null);
                     }}
                     submit={handleEdit}
-                    title="Edit Car Information"
+                    title={t('editCar')}
                     initialData={editingCar}
                     carId = {editingCar.carId}
+                    t={t}
                 />
             )}
         </div>
@@ -371,13 +381,15 @@ function CarModal({
     submit,
     title,
     initialData,
-    carId
+    carId,
+    t
 }: {
     close: () => void;
     submit: (carData: any) => void;
     title: string;
     initialData?: CarDTO;
     carId?: number;
+    t?: any;
 }) {
     const [form, setForm] = useState({
         customerId: initialData?.customerId || 4,
@@ -397,7 +409,7 @@ function CarModal({
 
     const handleSubmit = async () => {
         if (!form.licensePlate || !form.brand || !form.model || !form.year) {
-            alert("Please fill in all required fields!");
+            alert(t?.('messages.requiredField') || "Please fill in all required fields!");
             return;
         }
 
@@ -444,7 +456,7 @@ function CarModal({
                 <div className="p-6 space-y-4">
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            License Plate <span className="text-red-500">*</span>
+                            {t?.('table.plate')} <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -459,7 +471,7 @@ function CarModal({
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            CustomerName
+                            {t?.('form.submit')}
                         </label>
                         <input
                             type="text"
@@ -474,7 +486,7 @@ function CarModal({
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Brand <span className="text-red-500">*</span>
+                            {t?.('table.brand')} <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -489,7 +501,7 @@ function CarModal({
 
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Model <span className="text-red-500">*</span>
+                            {t?.('table.model')} <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -505,7 +517,7 @@ function CarModal({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Year <span className="text-red-500">*</span>
+                                {t?.('table.year')} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="number"
@@ -520,7 +532,7 @@ function CarModal({
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Odometer
+                                {t?.('form.submit')}
                             </label>
                             <input
                                 type="number"
@@ -542,7 +554,7 @@ function CarModal({
                         disabled={submitting}
                         className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors disabled:opacity-50"
                     >
-                        Cancel
+                        {t?.('form.cancel')}
                     </button>
                     <button
                         onClick={handleSubmit}
@@ -552,10 +564,10 @@ function CarModal({
                         {submitting ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                Loading Save...
+                                {t?.('messages.loading')}
                             </>
                         ) : (
-                            "Save"
+                            t?.('form.submit')
                         )}
                     </button>
                 </div>

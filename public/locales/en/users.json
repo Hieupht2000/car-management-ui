@@ -1,0 +1,43 @@
+{
+  "title": "User Management",
+  "addUser": "Add New User",
+  "editUser": "Edit User",
+  "deleteUser": "Delete User",
+  "searchPlaceholder": "Search by name or email...",
+  "table": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "joinDate": "Join Date",
+    "actions": "Actions"
+  },
+  "form": {
+    "name": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "phone": "Phone",
+    "status": "Status",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "technician": "Technician",
+    "staff": "Staff",
+    "customer": "Customer"
+  },
+  "messages": {
+    "loading": "Loading users...",
+    "noUsers": "No users found",
+    "addSuccess": "User added successfully",
+    "editSuccess": "User updated successfully",
+    "deleteSuccess": "User deleted successfully"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended"
+  }
+}

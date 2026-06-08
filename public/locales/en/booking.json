@@ -1,0 +1,42 @@
+{
+  "title": "Repair Appointments",
+  "addBooking": "New Appointment",
+  "editBooking": "Edit Appointment",
+  "cancelBooking": "Cancel Appointment",
+  "searchPlaceholder": "Search by date, car, or service...",
+  "table": {
+    "date": "Date",
+    "time": "Time",
+    "car": "Car",
+    "service": "Service",
+    "status": "Status",
+    "actions": "Actions",
+    "technician": "Technician"
+  },
+  "form": {
+    "date": "Date",
+    "time": "Time",
+    "car": "Car",
+    "service": "Service",
+    "description": "Description",
+    "notes": "Notes",
+    "status": "Status",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading..."
+  },
+  "messages": {
+    "loading": "Loading appointments...",
+    "noAppointments": "No appointments found",
+    "addSuccess": "Appointment created successfully",
+    "editSuccess": "Appointment updated successfully",
+    "cancelSuccess": "Appointment cancelled successfully",
+    "error": "An error occurred"
+  },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

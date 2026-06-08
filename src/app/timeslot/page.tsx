@@ -1,3 +1,9 @@
+/**
+ * Time Slot Management Page
+ * Manages appointment scheduling slots and availability
+ * Allows creating, editing, and deleting time slots
+ * Controls when appointments can be booked
+ */
 "use client"
 
 import { useState, useEffect } from "react";
@@ -96,21 +102,18 @@ export default function TimeSlotPage() {
 
     const handleAdd = async (timeSlotData: any) => {
         if (!token) {
-            alert("Token not found!");
+            setError("Token not found!");
             return;
         }
 
         try {
+            setError(null);
             const newTimeSlot = await timeSlotService.createTimeSlot(timeSlotData, token);
-            const newTimeSlots = {
-                ...timeSlotData,
-                timeSlot_Id: Date.now()
-            };
             setTimeSlots(prev => [...prev, newTimeSlot]);
             setShowModal(false);
         } catch (error: any) {
-            console.error(error);
-            alert(error.message || "Failed to add time slot");
+            console.error("Add error:", error);
+            setError(error.message || "Failed to add time slot");
         }
     };
 
@@ -118,11 +121,21 @@ export default function TimeSlotPage() {
         if (!token || !editingTimeSlot) return;
 
         try {
-            await timeSlotService.updateTimeSlot(editingTimeSlot.timeSlot_Id, timeSlotData, token);
+            const payload = {
+                startTime: timeSlotData.startTime,
+                endTime: timeSlotData.endTime,
+                isAvailable: timeSlotData.isAvailable,
+                timeSlot_Id: editingTimeSlot.timeSlot_Id
+            };
+            
+            console.log("Editing time slot with payload:", JSON.stringify(payload, null, 2));
+            const response = await timeSlotService.updateTimeSlot(editingTimeSlot.timeSlot_Id, payload, token);
+            console.log("Edit response:", response);
+            
             setTimeSlots(prev =>
                 prev.map(ts =>
-                    ts.timeSlot_Id === timeSlotData
-                        ? { ...ts, ...timeSlotData }
+                    ts.timeSlot_Id === editingTimeSlot.timeSlot_Id
+                        ? { ...ts, ...payload }
                         : ts
                 )
             );
@@ -130,40 +143,56 @@ export default function TimeSlotPage() {
             setShowModal(false);
             setEditingTimeSlot(null);
         } catch (error: any) {
-            console.error(error);
+            console.error("Edit error:", error);
             alert(error.message || "Failed to update time slot");
         }
     };
 
     const handleDelete = async (id: number) => {
         if (!confirm("Bạn có chắc muốn xóa khung giờ này?")) return;
-        if (!token) return;
+        if (!token) {
+            setError("Token not found");
+            return;
+        }
 
         try {
+            setError(null);
             await timeSlotService.deleteTimeSlot(id, token);
             setTimeSlots(prev => prev.filter(ts => ts.timeSlot_Id !== id));
         } catch (error: any) {
-            console.error(error);
-            alert(error.message || "Delete Failed!");
+            console.error("Delete error:", error);
+            setError(error.message || "Delete Failed!");
         }
     };
 
     const toggleAvailability = async (timeSlot: TimeSlot) => {
-        if (!token) return;
+        if (!token) {
+            setError("Token not found");
+            return;
+        }
 
         const updatedTimeSlot = {
-            ...timeSlot,
-            isAvailable: !timeSlot.isAvailable
+            startTime: timeSlot.startTime,
+            endTime: timeSlot.endTime,
+            isAvailable: !timeSlot.isAvailable,
+            timeSlot_Id: timeSlot.timeSlot_Id
         };
 
+        console.log("Toggling availability with payload:", JSON.stringify(updatedTimeSlot, null, 2));
+
         try {
-            await timeSlotService.updateTimeSlot(timeSlot.timeSlot_Id, updatedTimeSlot, token);
+            setError(null);
+            const response = await timeSlotService.updateTimeSlot(timeSlot.timeSlot_Id, updatedTimeSlot, token);
+            console.log("Toggle response:", response);
+            
             setTimeSlots(prev =>
                 prev.map(ts => ts.timeSlot_Id === timeSlot.timeSlot_Id ? updatedTimeSlot : ts)
             );
         } catch (error: any) {
-            console.error(error);
-            alert(error.message || "Không thể cập nhật trạng thái");
+            console.error("Toggle availability error:", error);
+            setError(error.message || "Không thể cập nhật trạng thái");
+            // Revert UI if error
+            setTimeSlots(prev => prev.map(ts => ts.timeSlot_Id === timeSlot.timeSlot_Id ? timeSlot : ts));
         }
     };
 

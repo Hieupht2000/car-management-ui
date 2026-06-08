@@ -1,0 +1,45 @@
+{
+  "title": "Car Management",
+  "addCar": "Add New Car",
+  "editCar": "Edit Car",
+  "deleteCar": "Delete Car",
+  "searchPlaceholder": "Search by plate, brand, or model...",
+  "table": {
+    "plate": "License Plate",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "color": "Color",
+    "status": "Status",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "form": {
+    "plate": "License Plate",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "color": "Color",
+    "vin": "VIN",
+    "mileage": "Mileage",
+    "status": "Status",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading..."
+  },
+  "messages": {
+    "loading": "Loading cars...",
+    "noCars": "No cars found",
+    "addSuccess": "Car added successfully",
+    "editSuccess": "Car updated successfully",
+    "deleteSuccess": "Car deleted successfully",
+    "error": "An error occurred"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "maintenance": "Under Maintenance"
+  }
+}

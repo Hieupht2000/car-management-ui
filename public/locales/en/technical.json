@@ -1,0 +1,36 @@
+{
+  "title": "Technical Information",
+  "addTechnical": "Add Technical Info",
+  "editTechnical": "Edit Technical Info",
+  "deleteTechnical": "Delete Technical Info",
+  "searchPlaceholder": "Search by car or type...",
+  "table": {
+    "car": "Car",
+    "type": "Type",
+    "description": "Description",
+    "date": "Date",
+    "actions": "Actions"
+  },
+  "form": {
+    "car": "Car",
+    "type": "Type",
+    "description": "Description",
+    "details": "Technical Details",
+    "serviceInterval": "Service Interval",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading technical information...",
+    "noInfo": "No technical information found",
+    "addSuccess": "Technical information added successfully",
+    "editSuccess": "Technical information updated successfully",
+    "deleteSuccess": "Technical information deleted successfully"
+  },
+  "types": {
+    "maintenance": "Maintenance",
+    "repair": "Repair",
+    "inspection": "Inspection",
+    "upgrade": "Upgrade"
+  }
+}

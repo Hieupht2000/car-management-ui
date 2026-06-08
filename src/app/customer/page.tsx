@@ -1,12 +1,20 @@
+/**
+ * Customer Management Page
+ * Manages customer records and contact information
+ * Allows creating, editing, viewing, and deleting customer profiles
+ * Features search, filtering, and customer directory
+ */
 "use client";
 
 import { useEffect, useState } from "react";
 import { Customer, customerService } from "@/services/customerService";
 import { create } from "domain";
 import { Users, User, Plus, Search, Edit2, Trash2, X, Loader2, AlertCircle, Mail, Phone, Car, Calendar } from "lucide-react";
+import { useTranslation } from "@/src/hooks/useTranslation";
 
 
 export default function CustomerPage() {
+    const { t } = useTranslation('customers');
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(true);
@@ -101,7 +109,7 @@ export default function CustomerPage() {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
                 <div className="text-center">
                     <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-                    <p className="text-gray-600 font-medium">Loading customer data...</p>
+                    <p className="text-gray-600 font-medium">{t('messages.loading')}</p>
                 </div>
             </div>
         );
@@ -117,9 +125,9 @@ export default function CustomerPage() {
                         </div>
                         <div>
                             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                Customers Management
+                                {t('title')}
                             </h1>
-                            <p className="text-gray-500 mt-1">Manage customer information</p>
+                            <p className="text-gray-500 mt-1">{t('messages.loading')}</p>
                         </div>
                     </div>
                 </div>
@@ -129,7 +137,7 @@ export default function CustomerPage() {
                     <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-blue-100 text-sm font-medium">Total Customers</p>
+                                <p className="text-blue-100 text-sm font-medium">{t('form.submit')}</p>
                                 <p className="text-3xl font-bold mt-2">{customers.length}</p>
                             </div>
                             <div className="p-4 bg-white/20 rounded-xl">
@@ -140,7 +148,7 @@ export default function CustomerPage() {
                     <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-green-100 text-sm font-medium">Search Results</p>
+                                <p className="text-green-100 text-sm font-medium">{t('searchPlaceholder')}</p>
                                 <p className="text-3xl font-bold mt-2">{filteredCustomers.length}</p>
                             </div>
                             <div className="p-4 bg-white/20 rounded-xl">
@@ -151,7 +159,7 @@ export default function CustomerPage() {
                     <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-purple-100 text-sm font-medium">New Customers</p>
+                                <p className="text-purple-100 text-sm font-medium">{t('messages.loading')}</p>
                                 <p className="text-3xl font-bold mt-2">
                                     {customers.filter(c => {
                                         const created = new Date(c.createdAt);
@@ -175,7 +183,7 @@ export default function CustomerPage() {
                             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-700 w-5 h-5" />
                             <input
                                 type="text"
-                                placeholder="Search by name, email, phone number..."
+                                placeholder={t('searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-700 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
@@ -190,7 +198,7 @@ export default function CustomerPage() {
                             className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-semibold"
                         >
                             <Plus className="w-5 h-5" />
-                            Add Customer
+                            {t('addCustomer')}
                         </button>
                     </div>
                 </div>
@@ -202,11 +210,11 @@ export default function CustomerPage() {
                             <thead>
                                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">CustomerID</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">FullName</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Email</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Phone Number</th>
-                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Created At</th>
-                                    <th className="px-6 py-4 text-center text-sm font-bold text-gray-700">Actions</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">{t('form.submit')}</th>
+                                    <th className="px-6 py-4 text-center text-sm font-bold text-gray-700">{t('form.submit')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -265,7 +273,7 @@ export default function CustomerPage() {
                         {filteredCustomers.length === 0 && (
                             <div className="text-center py-12 text-gray-500">
                                 <Users className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                                <p className="text-lg font-medium">Không tìm thấy khách hàng nào</p>
+                                <p className="text-lg font-medium">{t('messages.noCustomers')}</p>
                             </div>
                         )}
                     </div>
@@ -283,7 +291,7 @@ export default function CustomerPage() {
                                         <User className="w-6 h-6 text-white" />
                                     </div>
                                     <h2 className="text-2xl font-bold text-white">
-                                        {customerEdited ? "Edit Customer" : "Add New Customer"}
+                                        {customerEdited ? t('editCustomer') : t('addCustomer')}
                                     </h2>
                                 </div>
                                 <button
@@ -301,7 +309,7 @@ export default function CustomerPage() {
                         <div className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    FullName <span className="text-red-500">*</span>
+                                    {t('form.submit')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -314,7 +322,7 @@ export default function CustomerPage() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Email <span className="text-red-500">*</span>
+                                    {t('form.submit')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="email"
@@ -327,7 +335,7 @@ export default function CustomerPage() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    PhoneNumber <span className="text-red-500">*</span>
+                                    {t('form.submit')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="tel"
@@ -340,7 +348,7 @@ export default function CustomerPage() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    CreateAt
+                                    {t('form.submit')}
                                 </label>
                                 <input
                                     type="text"
@@ -360,13 +368,13 @@ export default function CustomerPage() {
                                 }}
                                 className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
                             >
-                                Cancel
+                                {t('form.cancel')}
                             </button>
                             <button
                                 onClick={handleSubmit}
                                 className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
                             >
-                                {customerEdited ? "Update" : "Add"}
+                                {customerEdited ? t('editCustomer') : t('addCustomer')}
                             </button>
                         </div>
                     </div>

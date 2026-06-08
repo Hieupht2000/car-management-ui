@@ -1,0 +1,54 @@
+{
+  "title": "Bảng Điều Khiển",
+  "welcomeBack": "Chào Mừng Trở Lại!",
+  "stats": {
+    "cars": "Xe Ô Tô",
+    "dateBookings": "Lịch Hẹn",
+    "events": "Sự Kiện",
+    "invoices": "Hóa Đơn"
+  },
+  "changes": {
+    "carsMonth": "Tháng Này",
+    "bookingsUpcoming": "sắp tới",
+    "eventsLastMonth": "% tháng trước",
+    "invoicesRevenue": "Triệu VNĐ"
+  },
+  "quickActions": {
+    "carManagement": "Quản Lý Xe",
+    "carManagementDesc": "Xem danh sách xe, thêm mới và chỉnh sửa thông tin",
+    "repairAppointments": "Lịch Hẹn Sửa Chữa",
+    "repairAppointmentsDesc": "Quản lý và lên lịch bảo trì và sửa chữa",
+    "customers": "Khách Hàng",
+    "customersDesc": "Quản lý thông tin khách hàng",
+    "timeSlots": "Khoảng Thời Gian",
+    "timeSlotsDesc": "Quản lý các khoảng thời gian lên lịch hẹn",
+    "technical": "Kỹ Thuật",
+    "technicalDesc": "Quản lý Thông Tin Kỹ Thuật",
+    "invoicesPayments": "Hóa Đơn & Thanh Toán",
+    "invoicesPaymentsDesc": "Xem lịch sử hóa đơn và thanh toán",
+    "garages": "Gara",
+    "garagesDesc": "Xem và quản lý các gara",
+    "services": "Dịch Vụ",
+    "servicesDesc": "Xem và quản lý dịch vụ",
+    "userManagement": "Quản Lý Người Dùng",
+    "userManagementDesc": "Quản lý người dùng và vai trò hệ thống"
+  },
+  "contentGrid": {
+    "recentCars": "Xe Mới Thêm Gần Đây",
+    "viewAll": "Xem Tất Cả",
+    "loadingCars": "Đang tải xe...",
+    "noCarsFound": "Không tìm thấy xe",
+    "calendarBooking": "Lịch Hẹn",
+    "loadingAppointments": "Đang tải lịch hẹn...",
+    "noAppointments": "Không có lịch hẹn sắp tới",
+    "viewAllAppointments": "Xem Tất Cả Lịch Hẹn"
+  },
+  "table": {
+    "plate": "Biển Số",
+    "brand": "Thương Hiệu",
+    "model": "Mẫu",
+    "year": "Năm",
+    "status": "Trạng Thái"
+  },
+  "logout": "Đăng Xuất"
+}

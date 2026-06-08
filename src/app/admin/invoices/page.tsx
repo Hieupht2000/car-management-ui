@@ -1,3 +1,9 @@
+/**
+ * Invoice Management Page
+ * Handles invoice creation, viewing, and payment tracking
+ * Allows downloading PDF invoices and sending email reminders
+ * Tracks payment status and financial records
+ */
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -23,6 +29,7 @@ import {
 } from "lucide-react";
 
 import { authService } from "@/services/authService";
+import { servicesService, ServiceDTO } from "@/services/servicesService";
 
 export default function InvoicePage() {
     const [invoices, setInvoices] = useState<InvoiceDTO[]>([]);
@@ -33,6 +40,7 @@ export default function InvoicePage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDTO | null>(null);
+    const [creatingInvoice, setCreatingInvoice] = useState(false);
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     useEffect(() => {
@@ -119,25 +127,35 @@ export default function InvoicePage() {
         setFilteredInvoices(filtered);
     };
 
-    const handleCreateInvoice = async (invoiceData: any,invoiceDetail: any) => {
-        // const newInvoice: InvoiceDTO = {
-        //     invoiceId: Date.now(),
-        //     fullName: invoiceData.fullName,
-        //     email: invoiceData.email,
-        //     dateIssued: new Date().toISOString(),
-        //     totalAmount: invoiceData.totalAmount,
-        //     vat: invoiceData.vat,
-        //     invoiceDetails: invoiceData.invoiceDetails
-        // };
-        if(!token){
-            alert("Token not found")
+    const handleCreateInvoice = async (invoiceData: any, invoiceDetail: any) => {
+        if (!token) {
+            setError("Token not found");
             return;
         }
-        const newInvoices = await invoiceService.createInvoice(invoiceData,token!);
-
-        setInvoices(prev => [newInvoices, ...prev]);
-        setShowCreateModal(false);
-        alert("✅ Create Invoice Complete!");
+        
+        setCreatingInvoice(true);
+        try {
+            setError(null);
+            // Transform frontend data format to backend expected format
+            const payload = {
+                booking_id: Number(invoiceData.bookingId),
+                services: invoiceData.invoiceDetails.map((detail: any) => ({
+                    serviceId: Number(detail.serviceId),
+                    quantity: Number(detail.quantity) || 1
+                }))
+            };
+            
+            console.log("Creating invoice with payload:", JSON.stringify(payload, null, 2));
+            const newInvoice = await invoiceService.createInvoice(payload, token);
+            setInvoices(prev => [newInvoice, ...prev]);
+            setFilteredInvoices(prev => [newInvoice, ...prev]);
+            setShowCreateModal(false);
+        } catch (err: any) {
+            setError(err.message || "Failed to create invoice");
+            console.error("Create invoice error:", err);
+        } finally {
+            setCreatingInvoice(false);
+        }
     };
 
 
@@ -339,6 +357,7 @@ export default function InvoicePage() {
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Date Created</th>
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Total Amount</th>
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">VAT</th>
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Payment Status</th>
                                     <th className="px-6 py-4 text-center text-sm font-bold text-gray-700">Actions</th>
                                 </tr>
                             </thead>
@@ -366,12 +385,21 @@ export default function InvoicePage() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="font-semibold text-orange-600">
-                                                {(invoice.vat / 1000).toFixed(0)}K
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-center gap-2 flex-wrap">
+                                             <span className="font-semibold text-orange-600">
+                                                 {(invoice.vat / 1000).toFixed(0)}K
+                                             </span>
+                                         </td>
+                                         <td className="px-6 py-4">
+                                             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                                 invoice.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' :
+                                                 invoice.paymentStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                 'bg-red-100 text-red-800'
+                                             }`}>
+                                                 {invoice.paymentStatus || 'Unpaid'}
+                                             </span>
+                                         </td>
+                                         <td className="px-6 py-4">
+                                             <div className="flex items-center justify-center gap-2 flex-wrap">
                                                 <button
                                                     onClick={() => {
                                                         setSelectedInvoice(invoice);
@@ -431,9 +459,9 @@ export default function InvoicePage() {
             {/* Detail Modal */}
 
             {showCreateModal && (
-                <CreateModal close={() => setShowCreateModal(false)} submit={handleCreateInvoice} />
+                 <CreateModal close={() => setShowCreateModal(false)} submit={handleCreateInvoice} isSubmitting={creatingInvoice} />
 
-            )}
+             )}
             {showDetailModal && selectedInvoice && (
                 <InvoiceDetailModal
                     invoice={selectedInvoice}
@@ -487,32 +515,48 @@ function DetailModal({ invoice, close }: any) {
     );
 }
 
-function CreateModal({ close, submit }: any) {
-    const [form, setForm] = useState({ fullName: "", email: "", services: [{ serviceName: "", unitPrice: 0 }] });
-    const [submitting, setSubmitting] = useState(false);
+function CreateModal({ close, submit, isSubmitting }: any) {
+     const [form, setForm] = useState({ bookingId: "", services: [{ serviceId: "", quantity: 1 }] });
+     const [availableServices, setAvailableServices] = useState<ServiceDTO[]>([]);
+     const [loadingServices, setLoadingServices] = useState(true);
+     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-    const addService = () => setForm({ ...form, services: [...form.services, { serviceName: "", unitPrice: 0 }] });
-    const removeService = (i: number) => setForm({ ...form, services: form.services.filter((_, idx) => idx !== i) });
-    const updateService = (i: number, field: string, value: any) => {
-        const newServices = [...form.services];
-        newServices[i] = { ...newServices[i], [field]: value };
-        setForm({ ...form, services: newServices });
-    };
+     useEffect(() => {
+         const loadServices = async () => {
+             try {
+                 if (token) {
+                     const services = await servicesService.getServices(token);
+                     setAvailableServices(services);
+                 }
+             } catch (err) {
+                 console.error("Failed to load services:", err);
+             } finally {
+                 setLoadingServices(false);
+             }
+         };
+         loadServices();
+     }, [token]);
 
-    const subtotal = form.services.reduce((sum, s) => sum + Number(s.unitPrice), 0);
-    const vat = subtotal * 0.1;
-    const total = subtotal + vat;
+     const addService = () => setForm({ ...form, services: [...form.services, { serviceId: "", quantity: 1 }] });
+     const removeService = (i: number) => setForm({ ...form, services: form.services.filter((_, idx) => idx !== i) });
+     const updateService = (i: number, field: string, value: any) => {
+         const newServices = [...form.services];
+         newServices[i] = { ...newServices[i], [field]: value };
+         setForm({ ...form, services: newServices });
+     };
+
+     const subtotal = form.services.reduce((sum, s) => {
+         const service = availableServices.find(svc => svc.serviceId === Number(s.serviceId));
+         return sum + (service ? service.price * s.quantity : 0);
+     }, 0);
+     const vat = subtotal * 0.1;
+     const total = subtotal + vat;
 
     const handleSubmit = async () => {
-        if (!form.fullName || !form.email) { alert("Please fill in completely!"); return; }
-        if (form.services.some(s => !s.serviceName || s.unitPrice <= 0)) { alert("Invalid service!"); return; }
-        setSubmitting(true);
-        try {
-            await submit({ fullName: form.fullName, email: form.email, totalAmount: total, vat, invoiceDetails: form.services });
-        } finally {
-            setSubmitting(false);
-        }
-    };
+         if (!form.bookingId) { alert("Please select a booking!"); return; }
+         if (form.services.some(s => !s.serviceId || s.quantity <= 0)) { alert("Invalid service selection!"); return; }
+         await submit({ bookingId: Number(form.bookingId), totalAmount: total, vat, invoiceDetails: form.services });
+     };
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -524,24 +568,40 @@ function CreateModal({ close, submit }: any) {
                     </div>
                 </div>
                 <div className="p-6 space-y-4">
-                    <div className="grid text-gray-700 gap-4">
-                        <div><label className="block text-sm font-semibold mb-2">FullName *</label><input type="text" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-blue-500 outline-none" /></div>
-                        <div><label className="block text-sm font-semibold mb-2">Email *</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-3 border-2 rounded-xl focus:border-blue-500 outline-none" /></div>
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Booking ID *</label>
+                        <input type="number" value={form.bookingId} onChange={(e) => setForm({ ...form, bookingId: e.target.value })} placeholder="Enter booking ID" className="w-full px-4 py-3 border-2 rounded-xl focus:border-blue-500 outline-none text-gray-700" />
                     </div>
                     <div>
                         <div className="flex justify-between mb-2">
-                            <h3 className="font-bold text-gray-700">Service</h3>
-                            <button onClick={addService} className="flex items-center gap-2 px-4 py-2 text-gray-700 text-blue-600 rounded-lg"><Plus className="w-4 h-4" />Add</button>
+                            <h3 className="font-bold text-gray-700">Services</h3>
+                            <button onClick={addService} disabled={loadingServices} className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 rounded-lg disabled:opacity-50"><Plus className="w-4 h-4" />Add Service</button>
                         </div>
-                        {form.services.map((s, i) => (
-                            <div key={i} className="flex gap-3 mb-3 text-gray-700 p-3 rounded-xl">
-                                <div className="flex-1 text-gray-700">
-                                    <input type="text" value={s.serviceName} onChange={(e) => updateService(i, 'serviceName', e.target.value)} placeholder="Name Service" className="w-full px-4 py-2 border-2 rounded-lg outline-none" />
-                                    <input type="number" value={s.unitPrice} onChange={(e) => updateService(i, 'unitPrice', Number(e.target.value))} placeholder="Price" className="w-full px-4 py-2 border-2 rounded-lg outline-none" />
+                        {loadingServices ? (
+                            <div className="text-center py-4 text-gray-500">Loading services...</div>
+                        ) : (
+                            form.services.map((s, i) => (
+                                <div key={i} className="flex gap-3 mb-3 text-gray-700 p-3 rounded-xl border border-gray-200">
+                                    <div className="flex-1 text-gray-700 space-y-2">
+                                        <select value={s.serviceId} onChange={(e) => updateService(i, 'serviceId', e.target.value)} className="w-full px-4 py-2 border-2 rounded-lg outline-none">
+                                            <option value="">Select service...</option>
+                                            {availableServices.map(srv => (
+                                                <option key={srv.serviceId} value={srv.serviceId}>{srv.name} - {(srv.price / 1000).toFixed(0)}K</option>
+                                            ))}
+                                        </select>
+                                        <div className="flex gap-2">
+                                            <input type="number" min="1" value={s.quantity} onChange={(e) => updateService(i, 'quantity', Math.max(1, Number(e.target.value)))} placeholder="Qty" className="w-20 px-4 py-2 border-2 rounded-lg outline-none" />
+                                            {s.serviceId && availableServices.find(svc => svc.serviceId === Number(s.serviceId)) && (
+                                                <div className="flex-1 px-4 py-2 bg-blue-50 rounded-lg text-sm font-semibold text-blue-600">
+                                                    {((availableServices.find(svc => svc.serviceId === Number(s.serviceId))?.price || 0) * s.quantity / 1000).toFixed(0)}K
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {form.services.length > 1 && <button onClick={() => removeService(i)} className="p-2 text-red-600 hover:bg-red-50 rounded"><X className="w-5 h-5" /></button>}
                                 </div>
-                                {form.services.length > 1 && <button onClick={() => removeService(i)} className="p-2 text-red-600"><X className="w-5 h-5" /></button>}
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                     <div className="text-gray-700 pt-4 space-y-2">
                         <div className="flex justify-between"><span>ToTal Service:</span><span className="font-semibold">{(subtotal / 1000).toFixed(0)}K</span></div>
@@ -550,9 +610,9 @@ function CreateModal({ close, submit }: any) {
                     </div>
                 </div>
                 <div className="px-6 pb-6 flex gap-3">
-                    <button onClick={close} className="flex-1 px-6 py-3 text-gray-700 rounded-xl font-semibold">Cancel</button>
-                    <button onClick={handleSubmit} disabled={submitting} className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2">
-                        {submitting ? <><Loader2 className="w-5 h-5 animate-spin" />Saving Invoice...</> : "Create Invoice"}
+                    <button onClick={close} disabled={isSubmitting} className="flex-1 px-6 py-3 text-gray-700 rounded-xl font-semibold disabled:opacity-50">Cancel</button>
+                    <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70">
+                        {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" />Saving Invoice...</> : "Create Invoice"}
                     </button>
                 </div>
             </div>

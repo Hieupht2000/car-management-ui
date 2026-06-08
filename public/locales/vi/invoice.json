@@ -1,0 +1,38 @@
+{
+  "title": "Hóa Đơn & Thanh Toán",
+  "addInvoice": "Tạo Hóa Đơn",
+  "viewInvoice": "Xem Hóa Đơn",
+  "downloadInvoice": "Tải PDF",
+  "searchPlaceholder": "Tìm kiếm theo số hóa đơn hoặc ngày...",
+  "table": {
+    "invoiceNumber": "Số Hóa Đơn",
+    "date": "Ngày",
+    "customer": "Khách Hàng",
+    "total": "Tổng",
+    "status": "Trạng Thái",
+    "actions": "Hành Động"
+  },
+  "form": {
+    "invoiceNumber": "Số Hóa Đơn",
+    "date": "Ngày",
+    "customer": "Khách Hàng",
+    "items": "Mặt Hàng",
+    "amount": "Số Tiền",
+    "tax": "Thuế",
+    "total": "Tổng",
+    "submit": "Gửi",
+    "cancel": "Hủy"
+  },
+  "messages": {
+    "loading": "Đang tải hóa đơn...",
+    "noInvoices": "Không tìm thấy hóa đơn",
+    "createSuccess": "Tạo hóa đơn thành công",
+    "downloadSuccess": "Tải hóa đơn thành công"
+  },
+  "status": {
+    "paid": "Đã Thanh Toán",
+    "pending": "Chờ Thanh Toán",
+    "overdue": "Quá Hạn",
+    "cancelled": "Đã Hủy"
+  }
+}

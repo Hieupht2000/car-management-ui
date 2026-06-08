@@ -1,3 +1,9 @@
+/**
+ * Garages Management Page
+ * Manages repair shop and garage locations
+ * Allows creating, editing, and deleting garage profiles
+ * Displays garage details including contact and location information
+ */
 "use client";
 
 import React from "react";

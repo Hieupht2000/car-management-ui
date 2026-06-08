@@ -144,9 +144,34 @@ export const bookingService = {
             if (!res.ok) throw new Error("Send reminder email failed");
             return res.json();
         });
+    },
+
+    async assignTechnician(bookingId: number, technicianId: number, token: string): Promise<any> {
+        const response = await fetch(`${API_URL}/${bookingId}/assign-technician/${technicianId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error("Failed to assign technician");
+        }
+        return response.json();
+    },
+
+    async getAvailableSlots(date: string, garageId: number, token: string): Promise<any> {
+        const response = await fetch(`${API_URL}/available-slots?date=${date}&garageId=${garageId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error("Failed to fetch available slots");
+        }
+        return response.json();
     }
-
-
-
 
 };

@@ -1,0 +1,38 @@
+{
+  "title": "Time Slot Management",
+  "addSlot": "Add New Time Slot",
+  "editSlot": "Edit Time Slot",
+  "deleteSlot": "Delete Time Slot",
+  "searchPlaceholder": "Search by date or time...",
+  "table": {
+    "date": "Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "capacity": "Capacity",
+    "booked": "Booked",
+    "available": "Available",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "form": {
+    "date": "Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "capacity": "Capacity",
+    "service": "Service",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading time slots...",
+    "noSlots": "No time slots found",
+    "addSuccess": "Time slot added successfully",
+    "editSuccess": "Time slot updated successfully",
+    "deleteSuccess": "Time slot deleted successfully"
+  },
+  "status": {
+    "available": "Available",
+    "full": "Full",
+    "closed": "Closed"
+  }
+}

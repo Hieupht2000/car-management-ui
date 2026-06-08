@@ -1,0 +1,38 @@
+{
+  "title": "Invoices & Payments",
+  "addInvoice": "Create Invoice",
+  "viewInvoice": "View Invoice",
+  "downloadInvoice": "Download PDF",
+  "searchPlaceholder": "Search by invoice number or date...",
+  "table": {
+    "invoiceNumber": "Invoice #",
+    "date": "Date",
+    "customer": "Customer",
+    "total": "Total",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "form": {
+    "invoiceNumber": "Invoice Number",
+    "date": "Date",
+    "customer": "Customer",
+    "items": "Items",
+    "amount": "Amount",
+    "tax": "Tax",
+    "total": "Total",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading invoices...",
+    "noInvoices": "No invoices found",
+    "createSuccess": "Invoice created successfully",
+    "downloadSuccess": "Invoice downloaded successfully"
+  },
+  "status": {
+    "paid": "Paid",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "cancelled": "Cancelled"
+  }
+}

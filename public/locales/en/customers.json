@@ -1,0 +1,32 @@
+{
+  "title": "Customers",
+  "addCustomer": "Add New Customer",
+  "editCustomer": "Edit Customer",
+  "deleteCustomer": "Delete Customer",
+  "searchPlaceholder": "Search by name or phone...",
+  "table": {
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "totalCars": "Total Cars",
+    "actions": "Actions"
+  },
+  "form": {
+    "name": "Full Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "zipCode": "Zip Code",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "loading": "Loading customers...",
+    "noCustomers": "No customers found",
+    "addSuccess": "Customer added successfully",
+    "editSuccess": "Customer updated successfully",
+    "deleteSuccess": "Customer deleted successfully"
+  }
+}

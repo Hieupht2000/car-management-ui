@@ -1,5 +1,13 @@
+/**
+ * Home Page Component
+ * Landing page placeholder
+ * Routes user to dashboard or login based on authentication status
+ */
 import Image from "next/image";
 
+/**
+ * Home page - Template/placeholder component
+ */
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

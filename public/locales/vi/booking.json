@@ -1,0 +1,42 @@
+{
+  "title": "Lịch Hẹn Sửa Chữa",
+  "addBooking": "Lịch Hẹn Mới",
+  "editBooking": "Chỉnh Sửa Lịch Hẹn",
+  "cancelBooking": "Hủy Lịch Hẹn",
+  "searchPlaceholder": "Tìm kiếm theo ngày, xe hoặc dịch vụ...",
+  "table": {
+    "date": "Ngày",
+    "time": "Giờ",
+    "car": "Xe",
+    "service": "Dịch Vụ",
+    "status": "Trạng Thái",
+    "actions": "Hành Động",
+    "technician": "Kỹ Thuật Viên"
+  },
+  "form": {
+    "date": "Ngày",
+    "time": "Giờ",
+    "car": "Xe",
+    "service": "Dịch Vụ",
+    "description": "Mô Tả",
+    "notes": "Ghi Chú",
+    "status": "Trạng Thái",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "loading": "Đang tải..."
+  },
+  "messages": {
+    "loading": "Đang tải lịch hẹn...",
+    "noAppointments": "Không tìm thấy lịch hẹn",
+    "addSuccess": "Tạo lịch hẹn thành công",
+    "editSuccess": "Cập nhật lịch hẹn thành công",
+    "cancelSuccess": "Hủy lịch hẹn thành công",
+    "error": "Đã xảy ra lỗi"
+  },
+  "status": {
+    "pending": "Chờ Xử Lý",
+    "confirmed": "Đã Xác Nhận",
+    "completed": "Hoàn Tất",
+    "cancelled": "Đã Hủy"
+  }
+}

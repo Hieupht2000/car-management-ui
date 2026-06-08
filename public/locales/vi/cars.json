@@ -1,0 +1,45 @@
+{
+  "title": "Quản Lý Xe",
+  "addCar": "Thêm Xe Mới",
+  "editCar": "Chỉnh Sửa Xe",
+  "deleteCar": "Xóa Xe",
+  "searchPlaceholder": "Tìm kiếm theo biển số, hãng hoặc mẫu...",
+  "table": {
+    "plate": "Biển Số",
+    "brand": "Hãng",
+    "model": "Mẫu",
+    "year": "Năm",
+    "color": "Màu Sắc",
+    "status": "Trạng Thái",
+    "actions": "Hành Động",
+    "edit": "Chỉnh Sửa",
+    "delete": "Xóa",
+    "view": "Xem"
+  },
+  "form": {
+    "plate": "Biển Số",
+    "brand": "Hãng",
+    "model": "Mẫu",
+    "year": "Năm",
+    "color": "Màu Sắc",
+    "vin": "VIN",
+    "mileage": "Quãng Đường",
+    "status": "Trạng Thái",
+    "submit": "Gửi",
+    "cancel": "Hủy",
+    "loading": "Đang tải..."
+  },
+  "messages": {
+    "loading": "Đang tải xe...",
+    "noCars": "Không tìm thấy xe",
+    "addSuccess": "Thêm xe thành công",
+    "editSuccess": "Cập nhật xe thành công",
+    "deleteSuccess": "Xóa xe thành công",
+    "error": "Đã xảy ra lỗi"
+  },
+  "status": {
+    "active": "Hoạt Động",
+    "inactive": "Không Hoạt Động",
+    "maintenance": "Đang Bảo Trì"
+  }
+}

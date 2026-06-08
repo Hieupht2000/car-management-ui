@@ -1,3 +1,9 @@
+/**
+ * Services Management Page
+ * Manages repair and maintenance service offerings
+ * Allows creating, editing, and deleting service types
+ * Displays service details including pricing and duration
+ */
 "use client";
 
 import { useState, useEffect } from "react";

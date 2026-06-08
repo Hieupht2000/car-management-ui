@@ -1,45 +1,95 @@
+/**
+ * Login Page Component
+ * Handles user authentication with email and password
+ * Stores JWT token to localStorage on successful login
+ */
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/authService";
+import { useTranslation } from "@/src/hooks/useTranslation";
 import { Mail, Lock, LogIn, Car, AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
-
+/**
+ * LoginPage - User authentication form
+ * Routes to dashboard on successful login
+ */
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  
+  // Form state management
+  const [email, setEmail] = useState("");           // User email input
+  const [password, setPassword] = useState("");     // User password input
+  const [loading, setLoading] = useState(false);    // Loading state during API call
+  const [error, setError] = useState("");           // Error message display
+  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
 
+  /**
+   * Handle login form submission
+   * Validates input, calls auth API, stores token, navigates to dashboard
+   */
   const handleLogin = async () => {
+    // Clear previous errors
     setError("");
+    
+    // Validate form inputs
     if (!email || !password) {
       setError("Please enter both email and password");
       return;
     }
+    
+    // Start loading state
     setLoading(true);
     
     try {
+      // Call login API with credentials
       const data = await authService.login(email, password);
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/dashboard";
+      console.log("Login response:", data); // Debug
+      
+      // Try different token property names (flexible API response handling)
+      const token = data?.token || data?.accessToken || data?.result?.token || data?.data?.token;
+      console.log("Extracted token:", token); // Debug
+      
+      if (token) {
+        // Store token to localStorage for future requests
+        localStorage.setItem("token", token);
+        console.log("Token saved to localStorage"); // Debug
+        
+        // Decode token to check user role
+        try {
+          const { jwtDecode } = await import("jwt-decode");
+          const decoded: any = jwtDecode(token);
+          const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+          
+          // Route based on role (case-insensitive)
+          if (role?.trim().toLowerCase() === "admin") {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/customer/dashboard");
+          }
+        } catch (decodeError) {
+          console.error("Error decoding token:", decodeError);
+          // Default to customer dashboard if decode fails
+          router.push("/customer/dashboard");
+        }
       } else {
-        setError("Invalid login response");
+        // Token not found in response
+        setError(`Invalid response: ${JSON.stringify(data).substring(0, 100)}`);
       }
 
     } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data || "Login failed");
+      // Display error message from API or generic fallback
+      setError(err.message || err.response?.data?.message || "Login failed");
     } finally {
+      // Stop loading state
       setLoading(false);
     }
   };
 
-  
+  /**
+   * Handle Enter key to submit form
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleLogin();
@@ -47,15 +97,15 @@ export default function LoginPage() {
   };
 
 
+  // Render login page UI
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Left Side - Branding */}
-     
+      {/* Left Side - Branding (hidden on mobile) */}
 
-      {/* Right Side - Login Form */}
+      {/* Right Side - Login Form Container */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          {/* Logo for mobile */}
+          {/* Mobile Logo - Visible only on small screens */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
               <Car className="w-8 h-8 text-white" />
@@ -67,14 +117,15 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Main Login Card */}
           <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-            {/* Header */}
+            {/* Page Header */}
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
               <p className="text-gray-500">Login to continue</p>
             </div>
 
-            {/* Error Alert */}
+            {/* Error Message Alert - Conditionally displayed */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -84,8 +135,9 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Form */}
+            {/* Login Form */}
             <div className="space-y-5">
+              {/* Email Input Field */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Email
@@ -104,6 +156,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Password Input Field with Show/Hide Toggle */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Password
@@ -119,6 +172,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     disabled={loading}
                   />
+                  {/* Toggle password visibility button */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -133,6 +187,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center">
                   <input
@@ -146,6 +201,7 @@ export default function LoginPage() {
                 </button>
               </div>
 
+              {/* Login Submit Button */}
               <button
                 onClick={handleLogin}
                 disabled={loading}
@@ -165,7 +221,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Divider */}
+            {/* Visual Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
@@ -175,8 +231,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Social Login */}
+            {/* Social Login Buttons (Google & Facebook) */}
             <div className="grid grid-cols-2 gap-3">
+              {/* Google Sign-In */}
               <button className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -186,6 +243,8 @@ export default function LoginPage() {
                 </svg>
                 <span className="text-sm font-medium text-gray-700">Google</span>
               </button>
+              
+              {/* Facebook Sign-In */}
               <button className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -194,7 +253,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Register Link */}
+            {/* Registration Link */}
             <p className="text-center text-gray-600 mt-6">
               Don't have an account?{" "}
               <button 
@@ -206,17 +265,23 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Additional Info */}
+          {/* Footer Legal Links */}
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>By logging in, you agree to our</p>
             <div className="flex items-center justify-center gap-4 mt-2">
-              <button className="text-blue-600 hover:underline"
-              onClick={() => window.location.href = '/terms'}
-              >Terms of Service</button>
+              <button 
+                className="text-blue-600 hover:underline"
+                onClick={() => window.location.href = '/terms'}
+              >
+                Terms of Service
+              </button>
               <span>•</span>
-              <button className="text-blue-600 hover:underline"
-              onClick={() => window.location.href = '/privacy'}
-              >Privacy Policy</button>
+              <button 
+                className="text-blue-600 hover:underline"
+                onClick={() => window.location.href = '/privacy'}
+              >
+                Privacy Policy
+              </button>
             </div>
           </div>
         </div>
