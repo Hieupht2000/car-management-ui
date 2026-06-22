@@ -35,7 +35,7 @@ export default function CustomerCarPage() {
         try {
             setLoading(true);
             setError(null);
-            const data = await carService.getCars(authToken);
+            const data = await carService.getMyCars(authToken);
             setCars(data);
         } catch (error: any) {
             console.error("Error fetching cars:", error);

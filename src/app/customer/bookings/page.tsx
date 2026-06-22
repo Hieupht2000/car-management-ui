@@ -51,7 +51,7 @@ export default function CustomerBookingPage() {
         try {
             setLoading(true);
             setError(null);
-            const data = await bookingService.getBookings(token!);
+            const data = await bookingService.getMyBookings(token!);
             setBookings(data);
         } catch (err: any) {
             console.error("Error loading bookings:", err);
@@ -72,7 +72,7 @@ export default function CustomerBookingPage() {
         try {
             setLoading(true);
             await bookingService.deleteBooking(bookingId, token!);
-            setBookings(prev => prev.filter(b => b.booking_id !== bookingId));
+            setBookings(prev => prev.filter(b => b.bookingId !== bookingId));
             alert("Booking cancelled successfully!");
         } catch (err: any) {
             console.error("Error cancelling booking:", err);
@@ -198,17 +198,16 @@ export default function CustomerBookingPage() {
                 <div className="space-y-4">
                     {filteredBookings.length > 0 ? (
                         filteredBookings.map((booking) => (
-                            <div key={booking.booking_id} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all">
+                            <div key={booking.bookingId} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all">
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-900">{booking.licensePlate}</h3>
                                         <p className="text-sm text-gray-600">{new Date(booking.bookingDate).toLocaleDateString('vi-VN')}</p>
                                     </div>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                        booking.status === "Completed" ? "bg-green-100 text-green-700" :
-                                        booking.status === "Confirmed" ? "bg-blue-100 text-blue-700" :
-                                        "bg-yellow-100 text-yellow-700"
-                                    }`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === "Completed" ? "bg-green-100 text-green-700" :
+                                            booking.status === "Confirmed" ? "bg-blue-100 text-blue-700" :
+                                                "bg-yellow-100 text-yellow-700"
+                                        }`}>
                                         {booking.status}
                                     </span>
                                 </div>
@@ -227,7 +226,7 @@ export default function CustomerBookingPage() {
                                     </button>
                                     {booking.status !== "Completed" && (
                                         <button
-                                            onClick={() => handleDelete(booking.booking_id!)}
+                                            onClick={() => handleDelete(booking.bookingId)}
                                             className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -320,7 +319,7 @@ function BookingModal({
     timeSlots: Record<number, string>;
 }) {
     const [form, setForm] = useState<BookingDTO>({
-        booking_id: 0,
+        bookingId: 0,
         customerId: 0,
         fullName: "",
         email: "",

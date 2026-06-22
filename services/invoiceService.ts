@@ -7,6 +7,7 @@ import { authService } from "./authService";
 
 // Base URL for Invoice API endpoints
 const API_URL = "https://localhost:7249/api/Invoices";
+const Api_url = "https://localhost:7249/api/CustomerInvoice";
 
 /**
  * Invoice Line Item Detail
@@ -60,6 +61,19 @@ export const invoiceService = {
         return res.json();
     },
 
+    getMyInvoices: async (token: string): Promise<InvoiceDTO[]> => {
+        const res = await fetch(Api_url + "/my-invoices", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error("Failed to load invoices");
+        }
+        return res.json();
+    },
     /**
      * Create a new invoice
      * @param invoiceData - Invoice details (booking, amount, services, etc.)

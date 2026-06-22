@@ -45,6 +45,20 @@ export const carService = {
         return res.json();
     },
 
+    getMyCars: async (token : string) : Promise<CarDTO[]> => {
+        const res = await fetch(API_URL + "/mycar", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error("Failed to load cars");
+        }
+        return res.json();
+    },
+
     /**
      * Add a new car to user's garage
      * @param carData - Car details (brand, model, plate, year, etc.)

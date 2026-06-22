@@ -173,17 +173,15 @@ export default function InvoicePage() {
         }
     };
 
-    const handleDownloadPdf = async (invoiceId: number) => {
+      const handleDownloadPdf = async (invoiceId: number) => {
         if (!token) return;
         try {
-            //For real API:
             const blob = await invoiceService.DownloadInvoicePDF(invoiceId, token);
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `Invoice_${invoiceId}.pdf`;
             a.click();
-            alert(`Loading PDF for invoice #${invoiceId}...`);
         } catch (error: any) {
             console.error(error);
             alert(error.message || "Download PDF failed!");

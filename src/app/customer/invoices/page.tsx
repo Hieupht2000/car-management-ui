@@ -44,7 +44,7 @@ export default function CustomerInvoicePage() {
         try {
             setLoading(true);
             setError(null);
-            const data = await invoiceService.getInvoices(token!);
+            const data = await invoiceService.getMyInvoices(token!);
             setInvoices(data);
             setFilteredInvoices(data);
         } catch (error: any) {

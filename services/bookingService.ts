@@ -4,7 +4,7 @@ import { authService } from "./authService";
 const API_URL = "https://localhost:7249/api/Booking";
 
 export interface BookingDTO {
-    booking_id?: number;
+    bookingId: number;
     customerId: number;
     email: string;
     fullName: string;
@@ -26,6 +26,20 @@ export interface BookingDTO {
 export const bookingService = {
     async getBookings(token: string) {
         const res = await fetch(API_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error("Failed to load bookings");
+        }
+        return res.json();
+    },
+
+    async getMyBookings(token: string) {
+        const res = await fetch(API_URL + "/my-bookings", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

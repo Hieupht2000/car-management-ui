@@ -100,7 +100,7 @@ export default function CustomerDashboardPage() {
   const fetchMyCars = async (token: string): Promise<void> => {
     setLoadingCars(true);
     try {
-      const cars = await carService.getCars(token);
+      const cars = await carService.getMyCars(token);
       const formatted = (cars || []).map((car: any) => ({
         plate: car.licensePlate || "N/A",
         brand: car.brand || "N/A",

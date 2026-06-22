@@ -91,13 +91,14 @@ export const authService = {
     console.log("Token cleared from localStorage and cookie");
   },
 
-  register: async (email: string, fullName: string, password: string, role: string) => {
+  register: async (username: string, email: string, password: string, phoneNumber: string) => {
     try {
       const response = await apiClient.post("/Auth/register", {
+        Username: username,
         Email: email,
-        FullName: fullName,
         Password: password,
-        Role: role,
+        PhoneNumber: phoneNumber,
+        //Role: role,
       });
       return response.data;
     } catch (error: any) {
