@@ -16,12 +16,19 @@ import {
     AlertCircle,
     Loader2,
 } from "lucide-react";
-import { BookingDTO, bookingService } from "@/services/bookingService";
+
+import {
+    BookingDTO,
+    bookingService,
+    
+} from "@/services/bookingService";
+
 import { useTranslation } from "@/src/hooks/useTranslation";
 import TimeSlotSelector from "@/src/components/TimeSlotSelector";
 
 export default function CustomerBookingPage() {
-    const { t } = useTranslation('booking');
+    const { t } = useTranslation("booking");
+
     const [bookings, setBookings] = useState<BookingDTO[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -29,30 +36,66 @@ export default function CustomerBookingPage() {
     const [error, setError] = useState<string | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<BookingDTO | null>(null);
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     const timeSlots: Record<number, string> = {
         1: "08:00 - 10:00",
         2: "10:00 - 12:00",
         3: "13:00 - 15:00",
-        4: "15:00 - 17:00"
+        4: "15:00 - 17:00",
+    };
+
+    const getBookingId = (booking: any) => {
+        return booking.bookingId ?? booking.booking_id ?? booking.booking_Id;
+    };
+
+    const normalizeStatus = (status?: string) => {
+        const value = status?.trim().toLowerCase();
+
+        if (value === "confirmed") return "confirmed";
+        if (value === "completed") return "completed";
+
+        return "pending";
+    };
+
+    const normalizeBooking = (booking: any): BookingDTO => {
+        return {
+            ...booking,
+            bookingId: booking.bookingId ?? booking.booking_id ?? booking.booking_Id,
+            status: normalizeStatus(booking.status),
+            licensePlate: booking.licensePlate ?? "",
+            note: booking.note ?? "",
+        };
     };
 
     useEffect(() => {
         if (!token) {
-            setError("Please Login!");
+            setError("Please login!");
             setLoading(false);
             return;
         }
+
         loadBookings();
     }, [token]);
 
     const loadBookings = async () => {
         try {
+            if (!token) return;
+
             setLoading(true);
             setError(null);
-            const data = await bookingService.getMyBookings(token!);
-            setBookings(data);
+
+            const data = await bookingService.getMyBookings(token);
+
+            const list = Array.isArray(data)
+                ? data
+                : (data as any)?.data ?? (data as any)?.$values ?? [];
+
+            const mappedBookings = list.map(normalizeBooking);
+
+            setBookings(mappedBookings);
         } catch (err: any) {
             console.error("Error loading bookings:", err);
             setError(err.message || "Failed to load bookings");
@@ -61,18 +104,33 @@ export default function CustomerBookingPage() {
         }
     };
 
-    const filteredBookings = bookings.filter(booking =>
-        booking.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.note.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredBookings = bookings.filter((booking: any) => {
+        const keyword = searchTerm.toLowerCase();
+
+        return (
+            booking.licensePlate?.toLowerCase().includes(keyword) ||
+            booking.note?.toLowerCase().includes(keyword) ||
+            String(booking.carId ?? "").includes(keyword)
+        );
+    });
 
     const handleDelete = async (bookingId: number) => {
         if (!confirm("Cancel this booking?")) return;
 
         try {
+            if (!token) {
+                alert("Token not found!");
+                return;
+            }
+
             setLoading(true);
-            await bookingService.deleteBooking(bookingId, token!);
-            setBookings(prev => prev.filter(b => b.bookingId !== bookingId));
+
+            await bookingService.deleteBooking(bookingId, token);
+
+            setBookings((prev) =>
+                prev.filter((b: any) => getBookingId(b) !== bookingId)
+            );
+
             alert("Booking cancelled successfully!");
         } catch (err: any) {
             console.error("Error cancelling booking:", err);
@@ -82,13 +140,21 @@ export default function CustomerBookingPage() {
         }
     };
 
-    const handleAdd = async (bookingData: BookingDTO) => {
+    const handleAdd = async (bookingData: any) => {
         try {
+            if (!token) {
+                alert("Token not found!");
+                return;
+            }
+
             setLoading(true);
-            const newBooking = await bookingService.createBooking(bookingData, token!);
-            setBookings(prev => [...prev, newBooking]);
+
+            await bookingService.createBookingCustomer(bookingData, token);
+
             setShowModal(false);
+
             alert("Booking created successfully!");
+
             await loadBookings();
         } catch (err: any) {
             console.error("Error creating booking:", err);
@@ -98,7 +164,25 @@ export default function CustomerBookingPage() {
         }
     };
 
-    if (loading) {
+    const getStatusClass = (status?: string) => {
+        const value = normalizeStatus(status);
+
+        if (value === "completed") return "bg-green-100 text-green-700";
+        if (value === "confirmed") return "bg-blue-100 text-blue-700";
+
+        return "bg-yellow-100 text-yellow-700";
+    };
+
+    const getStatusLabel = (status?: string) => {
+        const value = normalizeStatus(status);
+
+        if (value === "completed") return "Completed";
+        if (value === "confirmed") return "Confirmed";
+
+        return "Pending";
+    };
+
+    if (loading && bookings.length === 0) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
                 <div className="text-center">
@@ -118,11 +202,14 @@ export default function CustomerBookingPage() {
                         <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
                             <Calendar className="w-8 h-8 text-white" />
                         </div>
+
                         <div>
                             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                 My Appointments
                             </h1>
-                            <p className="text-gray-500 mt-1">Schedule and manage your service bookings</p>
+                            <p className="text-gray-500 mt-1">
+                                Schedule and manage your service bookings
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -132,7 +219,10 @@ export default function CustomerBookingPage() {
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
                         <AlertCircle className="w-5 h-5 text-red-600" />
                         <p className="text-red-800 font-medium flex-1">{error}</p>
-                        <button onClick={() => setError(null)} className="text-red-600 hover:text-red-700">
+                        <button
+                            onClick={() => setError(null)}
+                            className="text-red-600 hover:text-red-700"
+                        >
                             <X className="w-5 h-5" />
                         </button>
                     </div>
@@ -143,19 +233,26 @@ export default function CustomerBookingPage() {
                     <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
                         <div className="relative flex-1 w-full md:max-w-md">
                             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
                             <input
                                 type="text"
-                                placeholder="Search by car or service..."
+                                placeholder="Search by car, license plate, or note..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                             />
                         </div>
+
                         <button
                             onClick={() => setShowModal(true)}
-                            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-semibold"
+                            disabled={loading}
+                            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-semibold disabled:opacity-60"
                         >
-                            <Plus className="w-5 h-5" />
+                            {loading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Plus className="w-5 h-5" />
+                            )}
                             Book Service
                         </button>
                     </div>
@@ -166,8 +263,12 @@ export default function CustomerBookingPage() {
                     <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-blue-100 text-sm font-medium">Total Bookings</p>
-                                <p className="text-3xl font-bold mt-2">{bookings.length}</p>
+                                <p className="text-blue-100 text-sm font-medium">
+                                    Total Bookings
+                                </p>
+                                <p className="text-3xl font-bold mt-2">
+                                    {bookings.length}
+                                </p>
                             </div>
                             <Calendar className="w-8 h-8 opacity-40" />
                         </div>
@@ -176,8 +277,16 @@ export default function CustomerBookingPage() {
                     <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-yellow-100 text-sm font-medium">Upcoming</p>
-                                <p className="text-3xl font-bold mt-2">{bookings.filter(b => b.status !== "Completed").length}</p>
+                                <p className="text-yellow-100 text-sm font-medium">
+                                    Upcoming
+                                </p>
+                                <p className="text-3xl font-bold mt-2">
+                                    {
+                                        bookings.filter(
+                                            (b) => normalizeStatus(b.status) !== "completed"
+                                        ).length
+                                    }
+                                </p>
                             </div>
                             <Clock className="w-8 h-8 opacity-40" />
                         </div>
@@ -186,8 +295,16 @@ export default function CustomerBookingPage() {
                     <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-green-100 text-sm font-medium">Completed</p>
-                                <p className="text-3xl font-bold mt-2">{bookings.filter(b => b.status === "Completed").length}</p>
+                                <p className="text-green-100 text-sm font-medium">
+                                    Completed
+                                </p>
+                                <p className="text-3xl font-bold mt-2">
+                                    {
+                                        bookings.filter(
+                                            (b) => normalizeStatus(b.status) === "completed"
+                                        ).length
+                                    }
+                                </p>
                             </div>
                             <Car className="w-8 h-8 opacity-40" />
                         </div>
@@ -197,49 +314,94 @@ export default function CustomerBookingPage() {
                 {/* Bookings List */}
                 <div className="space-y-4">
                     {filteredBookings.length > 0 ? (
-                        filteredBookings.map((booking) => (
-                            <div key={booking.bookingId} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all">
-                                <div className="flex items-start justify-between mb-4">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-gray-900">{booking.licensePlate}</h3>
-                                        <p className="text-sm text-gray-600">{new Date(booking.bookingDate).toLocaleDateString('vi-VN')}</p>
-                                    </div>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === "Completed" ? "bg-green-100 text-green-700" :
-                                            booking.status === "Confirmed" ? "bg-blue-100 text-blue-700" :
-                                                "bg-yellow-100 text-yellow-700"
-                                        }`}>
-                                        {booking.status}
-                                    </span>
-                                </div>
+                        filteredBookings.map((booking: any) => {
+                            const bookingId = getBookingId(booking);
 
-                                <p className="text-gray-700 mb-4">{booking.note}</p>
+                            return (
+                                <div
+                                    key={bookingId}
+                                    className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all"
+                                >
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900">
+                                                {booking.licensePlate || `Car ID: ${booking.carId}`}
+                                            </h3>
+                                            <p className="text-sm text-gray-600">
+                                                {new Date(booking.bookingDate).toLocaleDateString(
+                                                    "vi-VN"
+                                                )}
+                                            </p>
+                                        </div>
 
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => {
-                                            setSelectedBooking(booking);
-                                            setShowDetailModal(true);
-                                        }}
-                                        className="flex-1 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium"
-                                    >
-                                        View Details
-                                    </button>
-                                    {booking.status !== "Completed" && (
-                                        <button
-                                            onClick={() => handleDelete(booking.bookingId)}
-                                            className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(
+                                                booking.status
+                                            )}`}
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            {getStatusLabel(booking.status)}
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-700 mb-4">
+                                        {booking.note || "No note"}
+                                    </p>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                        <div className="p-3 bg-gray-50 rounded-xl">
+                                            <p className="text-xs text-gray-500">Garage</p>
+                                            <p className="font-semibold text-gray-900">
+                                                {booking.garageId}
+                                            </p>
+                                        </div>
+
+                                        <div className="p-3 bg-gray-50 rounded-xl">
+                                            <p className="text-xs text-gray-500">Service</p>
+                                            <p className="font-semibold text-gray-900">
+                                                {booking.serviceName || booking.serviceId || "N/A"}
+                                            </p>
+                                        </div>
+
+                                        <div className="p-3 bg-gray-50 rounded-xl">
+                                            <p className="text-xs text-gray-500">Time Slot</p>
+                                            <p className="font-semibold text-gray-900">
+                                                {timeSlots[booking.timeSlot_Id] || "N/A"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedBooking(booking);
+                                                setShowDetailModal(true);
+                                            }}
+                                            className="flex-1 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                                        >
+                                            View Details
                                         </button>
-                                    )}
+
+                                        {normalizeStatus(booking.status) !== "completed" && (
+                                            <button
+                                                onClick={() => handleDelete(bookingId)}
+                                                className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
                             <Calendar className="w-16 h-16 mx-auto mb-4 opacity-20 text-gray-400" />
-                            <p className="text-lg font-medium text-gray-500">No bookings yet</p>
-                            <p className="text-sm text-gray-400 mt-2">Click "Book Service" to schedule an appointment</p>
+                            <p className="text-lg font-medium text-gray-500">
+                                No bookings yet
+                            </p>
+                            <p className="text-sm text-gray-400 mt-2">
+                                Click "Book Service" to schedule an appointment
+                            </p>
                         </div>
                     )}
                 </div>
@@ -259,7 +421,10 @@ export default function CustomerBookingPage() {
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-gray-900">Booking Details</h2>
+                            <h2 className="text-2xl font-bold text-gray-900">
+                                Booking Details
+                            </h2>
+
                             <button
                                 onClick={() => setShowDetailModal(false)}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -271,26 +436,71 @@ export default function CustomerBookingPage() {
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm text-gray-600">License Plate</p>
-                                    <p className="text-lg font-semibold text-gray-900">{selectedBooking.licensePlate}</p>
+                                    <p className="text-sm text-gray-600">Booking ID</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        #{getBookingId(selectedBooking)}
+                                    </p>
                                 </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600">Car ID</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {selectedBooking.carId}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600">License Plate</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {selectedBooking.licensePlate || "N/A"}
+                                    </p>
+                                </div>
+
                                 <div>
                                     <p className="text-sm text-gray-600">Date</p>
-                                    <p className="text-lg font-semibold text-gray-900">{new Date(selectedBooking.bookingDate).toLocaleDateString('vi-VN')}</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {new Date(selectedBooking.bookingDate).toLocaleDateString(
+                                            "vi-VN"
+                                        )}
+                                    </p>
                                 </div>
+
                                 <div>
                                     <p className="text-sm text-gray-600">Time Slot</p>
-                                    <p className="text-lg font-semibold text-gray-900">{timeSlots[selectedBooking.timeSlot_Id] || "N/A"}</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {timeSlots[selectedBooking.timeSlot_Id] || "N/A"}
+                                    </p>
                                 </div>
+
                                 <div>
                                     <p className="text-sm text-gray-600">Status</p>
-                                    <p className="text-lg font-semibold text-gray-900">{selectedBooking.status}</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {getStatusLabel(selectedBooking.status)}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600">Garage ID</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {selectedBooking.garageId}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600">Service</p>
+                                    <p className="text-lg font-semibold text-gray-900">
+                                        {(selectedBooking as any).serviceName ||
+                                            (selectedBooking as any).serviceId ||
+                                            "N/A"}
+                                    </p>
                                 </div>
                             </div>
 
                             <div>
                                 <p className="text-sm text-gray-600">Service Description</p>
-                                <p className="text-gray-900">{selectedBooking.note}</p>
+                                <p className="text-gray-900">
+                                    {selectedBooking.note || "No note"}
+                                </p>
                             </div>
                         </div>
 
@@ -315,42 +525,51 @@ function BookingModal({
     timeSlots,
 }: {
     close: () => void;
-    submit: (data: BookingDTO) => void;
+    submit: (data: any) => void;
     timeSlots: Record<number, string>;
 }) {
-    const [form, setForm] = useState<BookingDTO>({
-        bookingId: 0,
-        customerId: 0,
-        fullName: "",
-        email: "",
-        carId: 0,
-        licensePlate: "",
-        technicianId: 1,
-        technicianName: "",
-        garageId: 1,
+    const [form, setForm] = useState({
+        carId: "",
+        garageId: "",
+        timeSlot_Id: "",
+        serviceId: "",
         bookingDate: "",
-        timeSlot_Id: 1,
-        status: "Pending",
         note: "",
-        emailBody: "",
-        dealerEmail: "",
-        serviceName: "",
     });
 
-    const handleChange = (e: any) => {
+    const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: name.includes('Id') || name === 'timeSlot_Id' ? parseInt(value) || 0 : value });
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     const handleSubmit = () => {
-        if (!form.licensePlate || !form.bookingDate) {
+        if (
+            !form.carId ||
+            !form.garageId ||
+            !form.timeSlot_Id ||
+            !form.serviceId ||
+            !form.bookingDate
+        ) {
             alert("Please fill in all required fields!");
             return;
         }
 
-        const submitData: BookingDTO = {
-            ...form,
-            bookingDate: new Date(form.bookingDate).toISOString()
+        const submitData: any = {
+            carId: Number(form.carId),
+            garageId: Number(form.garageId),
+            timeSlot_Id: Number(form.timeSlot_Id),
+            serviceId: Number(form.serviceId),
+            bookingDate: new Date(form.bookingDate).toISOString(),
+            note: form.note,
         };
 
         submit(submitData);
@@ -362,7 +581,11 @@ function BookingModal({
                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-t-3xl sticky top-0">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-white">Book Service</h2>
-                        <button onClick={close} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
+
+                        <button
+                            onClick={close}
+                            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                        >
                             <X className="w-6 h-6 text-white" />
                         </button>
                     </div>
@@ -370,24 +593,113 @@ function BookingModal({
 
                 <div className="p-6 space-y-6">
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Vehicle Information</h3>
-                        <div className="space-y-4">
-                            <input type="text" name="licensePlate" value={form.licensePlate} onChange={handleChange} placeholder="License Plate *" className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none" />
-                            <input type="date" name="bookingDate" value={form.bookingDate} onChange={handleChange} className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none" />
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">
+                            Booking Information
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input
+                                type="number"
+                                name="carId"
+                                value={form.carId}
+                                onChange={handleChange}
+                                placeholder="Car ID *"
+                                className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none"
+                            />
+
+                            <input
+                                type="number"
+                                name="garageId"
+                                value={form.garageId}
+                                onChange={handleChange}
+                                placeholder="Garage ID *"
+                                className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none"
+                            />
+
+                            <input
+                                type="number"
+                                name="serviceId"
+                                value={form.serviceId}
+                                onChange={handleChange}
+                                placeholder="Service ID *"
+                                className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none"
+                            />
+
+                            <input
+                                type="date"
+                                name="bookingDate"
+                                value={form.bookingDate}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none"
+                            />
                         </div>
                     </div>
 
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Service Details</h3>
-                        <textarea name="note" value={form.note} onChange={handleChange} placeholder="Describe the service you need..." rows={4} className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none resize-none" />
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">
+                            Time Slot
+                        </h3>
+
+                        {form.bookingDate && form.garageId ? (
+                            <TimeSlotSelector
+                                date={form.bookingDate}
+                                garageId={Number(form.garageId)}
+                                selectedSlot={Number(form.timeSlot_Id) || 0}
+                                onSelectSlot={(slotId) =>
+                                    setForm((prev) => ({
+                                        ...prev,
+                                        timeSlot_Id: String(slotId),
+                                    }))
+                                }
+                                token={token}
+                                timeSlots={timeSlots}
+                            />
+                        ) : (
+                            <input
+                                type="number"
+                                name="timeSlot_Id"
+                                value={form.timeSlot_Id}
+                                onChange={handleChange}
+                                placeholder="TimeSlot ID *"
+                                className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none"
+                            />
+                        )}
+
+                        {form.timeSlot_Id && (
+                            <p className="mt-2 text-sm text-gray-600">
+                                Selected: {timeSlots[Number(form.timeSlot_Id)] || "N/A"}
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">
+                            Service Details
+                        </h3>
+
+                        <textarea
+                            name="note"
+                            value={form.note}
+                            onChange={handleChange}
+                            placeholder="Describe the service you need..."
+                            rows={4}
+                            className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none resize-none"
+                        />
                     </div>
                 </div>
 
                 <div className="px-6 pb-6 flex gap-3">
-                    <button onClick={close} className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
+                    <button
+                        onClick={close}
+                        className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                    >
                         Cancel
                     </button>
-                    <button onClick={handleSubmit} className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all">
+
+                    <button
+                        onClick={handleSubmit}
+                        className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-xl hover:scale-105 transition-all"
+                    >
                         Book Now
                     </button>
                 </div>

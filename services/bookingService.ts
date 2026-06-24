@@ -52,8 +52,8 @@ export const bookingService = {
         return res.json();
     },
 
-    async createBooking(bookingData: any, token: string): Promise<BookingDTO> {
-        const response = await fetch(API_URL, {
+    async createBookingAdmin(bookingData: any, token: string): Promise<BookingDTO> {
+        const response = await fetch(`${API_URL}/admin-create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -67,38 +67,51 @@ export const bookingService = {
         return response.json();
     },
 
-
+    async createBookingCustomer(bookingData: any, token: string): Promise<BookingDTO> {
+        const response = await fetch(`${API_URL}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(bookingData),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to create booking");
+        }
+        return response.json();
+    },
 
     async updateBookingStatus(
-    id: number,
-    newStatus: string,
-    token: string
-): Promise<BookingDTO> {
-    if (!id) {
-        throw new Error("Booking id is required");
-    }
+        id: number,
+        newStatus: string,
+        token: string
+    ): Promise<BookingDTO> {
+        if (!id) {
+            throw new Error("Booking id is required");
+        }
 
-    if (!newStatus) {
-        throw new Error("Status is required");
-    }
+        if (!newStatus) {
+            throw new Error("Status is required");
+        }
 
-    const response = await fetch(`${API_URL}/${id}/status`, {
-        method: "PUT",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newStatus.toLowerCase()),
-    });
+        const response = await fetch(`${API_URL}/${id}/status`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newStatus.toLowerCase()),
+        });
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Update booking status error:", errorText);
-        throw new Error(errorText || "Failed to update booking status");
-    }
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Update booking status error:", errorText);
+            throw new Error(errorText || "Failed to update booking status");
+        }
 
-    return response.json();
-},
+        return response.json();
+    },
     async deleteBooking(bookingId: number, token: string): Promise<void> {
         const response = await fetch(API_URL + `/${bookingId}`, {
             method: "DELETE",
