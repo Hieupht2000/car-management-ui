@@ -217,15 +217,17 @@ export default function BookingPage() {
     // };
 
 
-    const handleStatusChange = async (bookingId: number, Newstatus: string, operatorTechnicianId: number) => {
+    const handleStatusChange = async (bookingId: number, Newstatus: string) => {
         try {
             setLoading(true);
+            
+            const status = Newstatus.toLowerCase();
 
-            await bookingService.updateBookingStatus(bookingId, Newstatus, token!, operatorTechnicianId);
+            await bookingService.updateBookingStatus(bookingId, status, token!);
 
             // Mock status update
             setBookings(prev => prev.map(b =>
-                b.booking_id === bookingId ? { ...b, status: Newstatus, operatorTechnicianId: operatorTechnicianId } : b
+                b.booking_id === bookingId ? { ...b, status: status.toLowerCase()} : b
             ));
 
             alert("Update Status Complete!");
@@ -517,7 +519,7 @@ export default function BookingPage() {
                                             </div>
                                             <select
                                                 value={booking.status}
-                                                onChange={(e) => handleStatusChange(booking.booking_id!, e.target.value, booking.technicianId)}
+                                                onChange={(e) => handleStatusChange(booking.booking_id!, e.target.value)}
                                                 className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.color} bg-white cursor-pointer`}
                                             >
                                                 <option value="Pending">Pending</option>
@@ -857,7 +859,7 @@ function BookingModal({
                                      timeSlots={timeSlots}
                                  />
                              )}
-                            <select name="status" value={form.status} onChange={handleChange} className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none">
+                            <select name="status" value={form.status?.toLowerCase() || "pending"} onChange={handleChange} className="w-full px-4 py-3 border-2 text-gray-700 rounded-xl focus:border-blue-500 outline-none">
                                 <option value="Pending">Pending</option>
                                 <option value="Confirmed">Confirmed</option>
                                 <option value="Completed">Completed</option>

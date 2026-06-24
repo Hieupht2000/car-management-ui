@@ -295,7 +295,7 @@ export default function AdminUsersPage() {
                                     filteredUsers.map((user, idx) => (
                                         <tr key={user.userId || idx} className="hover:bg-blue-50/50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-3">
                                                     <Mail className="font-semibold text-gray-900" />
                                                     {user.email || "N/A"}
                                                 </div>

@@ -4,7 +4,7 @@ import { authService } from "./authService";
 const API_URL = "https://localhost:7249/api/Booking";
 
 export interface BookingDTO {
-    bookingId: number;
+    booking_id: number;
     customerId: number;
     email: string;
     fullName: string;
@@ -69,21 +69,36 @@ export const bookingService = {
 
 
 
-    async updateBookingStatus(id: number, newStatus: string, token: string, operatorTechnicianId: number): Promise<BookingDTO> {
-        const response = await fetch(`${API_URL}/${id}/status`, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(API_URL),
-        });
-        if (!response.ok) {
-            throw new Error("Failed to update booking status");
-        }
-        return response.json();
-    },
+    async updateBookingStatus(
+    id: number,
+    newStatus: string,
+    token: string
+): Promise<BookingDTO> {
+    if (!id) {
+        throw new Error("Booking id is required");
+    }
 
+    if (!newStatus) {
+        throw new Error("Status is required");
+    }
+
+    const response = await fetch(`${API_URL}/${id}/status`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newStatus.toLowerCase()),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Update booking status error:", errorText);
+        throw new Error(errorText || "Failed to update booking status");
+    }
+
+    return response.json();
+},
     async deleteBooking(bookingId: number, token: string): Promise<void> {
         const response = await fetch(API_URL + `/${bookingId}`, {
             method: "DELETE",

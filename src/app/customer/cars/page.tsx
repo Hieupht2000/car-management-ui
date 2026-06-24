@@ -188,6 +188,7 @@ export default function CustomerCarPage() {
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">carId</th>
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">License Plate</th>
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Brand</th>
                                     <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Model</th>
@@ -199,6 +200,7 @@ export default function CustomerCarPage() {
                                 {filteredCars.length > 0 ? (
                                     filteredCars.map((car) => (
                                         <tr key={car.carId} className="hover:bg-blue-50/50 transition-colors">
+                                            <td className="px-6 py-4 font-semibold text-gray-900">{car.carId}</td>
                                             <td className="px-6 py-4 font-semibold text-gray-900">{car.licensePlate}</td>
                                             <td className="px-6 py-4 text-gray-700">{car.brand}</td>
                                             <td className="px-6 py-4 text-gray-700">{car.model}</td>
